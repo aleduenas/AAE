@@ -148,6 +148,7 @@ class AdversarialAutoEncoder:
                 # Joint loss 
                 L = self.alpha*C + self.beta*D + self.gamma*E
 
+                
                 # Gradient steps
                 L.backward()
                 self.enc_optimizer.step()
@@ -199,9 +200,9 @@ class AdversarialAutoEncoder:
         true_male = total - true_female      
         y_disc = abs(pred_male/true_male - pred_female/true_female)
         y_acc = correct / total
-        # TODO: Add t to formula to check different t-discriminations
-        y_t_delta = y_acc - y_disc
         
-        results = [y_t_delta, y_disc, y_acc]
+        deltas = [y_acc - t*y_disc for t in [0,0.5,1,1.5,2,2.5,3]]
         
-        return results
+        results = [y_disc, y_acc]
+        
+        return deltas, results
